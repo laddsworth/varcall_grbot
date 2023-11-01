@@ -33,7 +33,8 @@ process index_bam {
     input:
     set val(sample_id), file(bam_file) from samples
     output:
-    file("*.bai")
+    //ILB_BFMOS5542034.cram.crai
+    file("${bam_file}.*ai")
     script:
     """
     samtools index ${bam_file}

@@ -1,5 +1,6 @@
 #!/usr/bin/env nextflow
 
+
 // Get sample info from sample sheet
 // Minimum information that are needed in the sample sheet are SampleID, Gender and BAM file location
 Channel.fromPath( file(params.sample_sheet) )
@@ -8,7 +9,8 @@ Channel.fromPath( file(params.sample_sheet) )
             def sample_id = row['SampleID']
             def gender = row['Gender']
             def bam_file = file(row['BAM/CRAM'])
-            return [ sample_id, gender, bam_file ]
+            def index_bam_file = file(row['BAM/CRAM.index'])
+            return [ sample_id, gender, bam_file , index_bam_file]
         }.into{samples_1; samples_2; samples_3; samples_4; samples_5}
 
 if (params.build == "b37") {
@@ -74,7 +76,7 @@ process print_sample_info {
     tag { "${sample_id}" }
     echo true
     input:
-    set val(sample_id), val(gender), file(bam_file) from samples_1
+    set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_1
     script:
     """
     printf "[sample_info] sample: ${sample_id}\tGender: ${gender}\tBAM: ${bam_file}\n"
@@ -106,7 +108,7 @@ process run_haplotype_caller_on_autosomes {
     publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
     input:
-    set val(sample_id), val(gender), file(bam_file) from samples_2
+    set val(sample_id), val(gender), file(bam_file),file(bam_index) from samples_2
     file (ref_seq)
     file (ref_seq_index)
     file (ref_seq_dict)
@@ -188,7 +190,7 @@ process run_haplotype_caller_on_x_par1_male {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_male_1
+     set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_male_1
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -263,7 +265,7 @@ process run_haplotype_caller_on_x_par2_male {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_male_2
+     set val(sample_id), val(gender), file(bam_file),file(bam_index) from samples_male_2
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -339,7 +341,7 @@ process run_haplotype_caller_on_x_nonpar_male {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_male_3
+     set val(sample_id), val(gender), file(bam_file),file(bam_index) from samples_male_3
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -415,7 +417,7 @@ process run_haplotype_caller_on_y_par1_male {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_male_4
+     set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_male_4
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -491,7 +493,7 @@ process run_haplotype_caller_on_y_par2_male {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_male_5
+     set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_male_5
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -566,7 +568,7 @@ process run_haplotype_caller_on_y_nonpar_male {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_male_6
+     set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_male_6
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -643,7 +645,7 @@ process run_haplotype_caller_on_x_female {
      publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
      input:
-     set val(sample_id), val(gender), file(bam_file) from samples_female
+     set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_female
      file (ref_seq)
      file (ref_seq_index)
      file (ref_seq_dict)
@@ -719,7 +721,7 @@ process run_haplotype_caller_on_mt {
     publishDir "${params.out_dir}/${sample_id}", mode: 'copy', overwrite: false
 
     input:
-    set val(sample_id), val(gender), file(bam_file) from samples_5
+    set val(sample_id), val(gender), file(bam_file), file(bam_index) from samples_5
     file (ref_seq)
     file (ref_seq_index)
     file (ref_seq_dict)

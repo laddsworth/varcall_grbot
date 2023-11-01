@@ -12,10 +12,10 @@ Below is the sample sheet format. The sample sheet should be a tab delimmted tex
 - BAM column should contain the flll path to the BAM.
 - All collumns not used in this step (Fastq1R1, FastqR2, gVCF) should be filled in with a "."
 
-
-| SampleID | Gender | FastqR1 | FastqR2 | BAM/CRAM | gVCF |
+<span style="color:red"> add column BAM/CRAM.index </span>
+| SampleID | Gender | FastqR1 | FastqR2 | BAM/CRAM | BAM/CRAM.index | gVCF |
 | -------- | ------ | ------- | ------- | --- | ---- |
-| A01      | F      | .       | .       | /pathto/A01.bam | . |
+| A01      | F      | .       | .       | /pathto/A01.cram | /pathto/A01.bam.cram.crai  | . |
 
 
 ## To run
